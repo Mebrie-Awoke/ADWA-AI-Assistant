@@ -1,0 +1,187 @@
+/* Custom utilities extending Tailwind */
+
+/* Glassmorphism panel for input */
+.glass-panel {
+    background: rgba(30, 30, 36, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.float-anim {
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+/* Custom Webkit Scrollbar */
+.custom-scrollbar::-webkit-scrollbar,
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track,
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Beautiful AI Thinking Animation */
+.ai-thinking-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 4px;
+}
+
+.ai-pulse-bar {
+    width: 4px;
+    height: 16px;
+    background: linear-gradient(135deg, #FCD116, #CE1126);
+    border-radius: 4px;
+    animation: eqPulse 1.2s infinite ease-in-out;
+}
+
+.ai-pulse-bar:nth-child(2) { 
+    animation-delay: 0.15s; 
+    height: 24px; 
+}
+.ai-pulse-bar:nth-child(3) { 
+    animation-delay: 0.3s; 
+    height: 12px; 
+}
+
+@keyframes eqPulse {
+    0%, 100% { transform: scaleY(0.5); opacity: 0.5; }
+    50% { transform: scaleY(1.2); opacity: 1; box-shadow: 0 0 10px currentColor; }
+}
+
+/* Mic pulsing state */
+.mic-listening {
+    background: #CE1126 !important; /* ethio red */
+    color: white !important;
+    border-color: #CE1126 !important;
+    animation: micPulse 1.5s infinite;
+}
+
+@keyframes micPulse {
+    0% { box-shadow: 0 0 0 0 rgba(206, 17, 38, 0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(206, 17, 38, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(206, 17, 38, 0); }
+}
+
+/* Message styling overrides for markdown/html (when typing) */
+.prose p {
+    margin-bottom: 0.5em;
+}
+.prose p:last-child {
+    margin-bottom: 0;
+}
+
+/* Quiz Option Animations */
+.quiz-option {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.quiz-option:hover:not(:disabled) {
+    transform: translateX(5px);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+.quiz-correct {
+    background-color: rgba(0, 154, 68, 0.8) !important; /* ethio green */
+    border-color: #009A44 !important;
+    color: white !important;
+}
+.quiz-wrong {
+    background-color: rgba(206, 17, 38, 0.8) !important; /* ethio red */
+    border-color: #CE1126 !important;
+    color: white !important;
+}
+
+/* Message styling for user and bot messages */
+.message-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    word-wrap: break-word;
+}
+
+.message-content p {
+    margin-bottom: 0.75rem;
+}
+
+.message-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* Skeleton loading animation */
+.animate-skeleton {
+    animation: skeletonPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes skeletonPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+}
+
+/* Mic button glow effect */
+.mic-glow-btn {
+    transition: all 0.3s ease;
+}
+
+.mic-glow-btn:hover {
+    box-shadow: 0 0 20px rgba(252, 209, 22, 0.3);
+}
+  /* Additional custom styles for scrollable chat */
+            #chat-messages {
+                scroll-behavior: smooth;
+                max-height: calc(100vh - 200px);
+                padding-bottom: 20px;
+            }
+            
+            #chat-messages::-webkit-scrollbar {
+                width: 6px;
+            }
+            
+            #chat-messages::-webkit-scrollbar-track {
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 10px;
+            }
+            
+            #chat-messages::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 10px;
+            }
+            
+            #chat-messages::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 255, 255, 0.3);
+            }
+            
+            /* Ensure messages have proper spacing */
+            .fade-in {
+                animation: fadeIn 0.3s ease-in;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }

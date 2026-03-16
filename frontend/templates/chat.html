@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Adwa AI Assistant</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#0F1015',
+                            800: '#17181F',
+                            700: '#232530'
+                        },
+                        ethiogreen: '#009A44',
+                        ethioyellow: '#FCD116',
+                        ethiored: '#CE1126',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'gradient-x': 'gradient-x 3s ease infinite',
+                        'skeleton': 'skeleton 1.5s ease-in-out infinite',
+                        'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'splash-scale': 'splashScale 2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'fade-in-delayed': 'fadeIn 1s ease-out 1.2s forwards',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                    },
+                    keyframes: {
+                        'gradient-x': {
+                            '0%, 100%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'left center'
+                            },
+                            '50%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'right center'
+                            }
+                        },
+                        'skeleton': {
+                            '0%': { opacity: '0.4' },
+                            '50%': { opacity: '0.8' },
+                            '100%': { opacity: '0.4' }
+                        },
+                        'slideUp': {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        'splashScale': {
+                            '0%': { opacity: '0', transform: 'scale(1.1)', filter: 'brightness(0.5) blur(4px)' },
+                            '100%': { opacity: '1', transform: 'scale(1)', filter: 'brightness(1) blur(0) drop-shadow(0 0 20px rgba(252,209,22,0.4))' }
+                        },
+                        'fadeIn': {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+            rel="stylesheet">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <style>
+            /* Additional custom styles for scrollable chat */
+            #chat-messages {
+                scroll-behavior: smooth;
+                max-height: calc(100vh - 200px);
+                padding-bottom: 20px;
+            }
+            
+            #chat-messages::-webkit-scrollbar {
+                width: 6px;
+            }
+            
+            #chat-messages::-webkit-scrollbar-track {
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 10px;
+            }
+            
+            #chat-messages::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 10px;
+            }
+            
+            #chat-messages::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 255, 255, 0.3);
+            }
+            
+            /* Ensure messages have proper spacing */
+            .fade-in {
+                animation: fadeIn 0.3s ease-in;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        </style>
+    </head>
+    <body
+        class="bg-dark-900 text-gray-100 font-sans h-screen flex overflow-hidden selection:bg-ethiogreen selection:text-white relative">
+
+        <!-- Splash Loading Screen -->
+        <div id="splash-screen"
+            class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-dark-900 overflow-hidden transition-all duration-1000">
+            <!-- Background Gradient and Glows -->
+            <div
+                class="absolute inset-0 bg-gradient-to-b from-dark-900 via-[#13151c] to-dark-900 z-0"></div>
+            <div
+                class="absolute top-0 right-0 w-[600px] h-[600px] bg-ethiogreen/10 rounded-full blur-[120px] animate-pulse-slow z-0"></div>
+            <div
+                class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-ethiored/10 rounded-full blur-[120px] animate-pulse-slow z-0"
+                style="animation-delay: 2s;">
+            </div>
+            <!-- Content Base -->
+            <div class="relative z-10 flex flex-col items-center w-full px-4">
+                <!-- Hero Image -->
+                <div
+                    class="mb-8 overflow-hidden rounded-full border-4 border-white/10 shadow-[0_0_50px_rgba(252,209,22,0.15)] relative group animate-splash-scale w-36 h-36 md:w-52 md:h-52">
+                    <img src="{{ url_for('static', filename='splash_image.png') }}"
+                        alt="Adwa Historical Illustration"
+                        class="w-full h-full object-cover">
+                    <div
+                        class="absolute inset-0 shadow-inner [box-shadow:inset_0_0_30px_rgba(0,0,0,0.6)] z-10"></div>
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-dark-900/40 to-transparent z-10"></div>
+                </div>
+
+                <!-- Titles -->
+                <h1
+                    class="text-3xl md:text-5xl font-bold mb-4 tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-ethiogreen via-ethioyellow to-ethiored animate-[slideUp_0.8s_ease-out_both] drop-shadow-lg text-center"
+                    style="animation-delay: 0.3s;">
+                    Adwa AI Assistant
+                </h1>
+                <p
+                    class="text-gray-400 text-xs md:text-base tracking-[0.3em] font-medium uppercase animate-[slideUp_0.8s_ease-out_both] text-center mb-12 opacity-80"
+                    style="animation-delay: 0.5s;">
+                    History Meets Intelligence
+                </p>
+
+                <!-- Loading Indicator -->
+                <div
+                    class="flex flex-col items-center gap-4 opacity-0 animate-fade-in-delayed">
+                    <div class="flex gap-3">
+                        <div
+                            class="w-2.5 h-2.5 rounded-full bg-ethiogreen animate-bounce"
+                            style="animation-delay: 0s;"></div>
+                        <div
+                            class="w-2.5 h-2.5 rounded-full bg-ethioyellow animate-bounce"
+                            style="animation-delay: 0.15s;"></div>
+                        <div
+                            class="w-2.5 h-2.5 rounded-full bg-ethiored animate-bounce"
+                            style="animation-delay: 0.3s;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Global Background Glows -->
+        <div
+            class="absolute top-0 left-0 w-[500px] h-[500px] bg-ethiogreen/5 rounded-full blur-[120px] pointer-events-none"></div>
+        <div
+            class="absolute bottom-0 right-0 w-[600px] h-[600px] bg-ethiored/5 rounded-full blur-[150px] pointer-events-none"></div>
+
+        <!-- Mobile Sidebar Backdrop -->
+        <div id="sidebar-backdrop"
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden transition-opacity opacity-0"
+            onclick="toggleSidebar()"></div>
+
+        <!-- Sidebar -->
+        <aside id="sidebar"
+            class="bg-dark-800/90 backdrop-blur-xl w-72 flex-shrink-0 flex flex-col border-r border-white/5 transition-transform duration-300 fixed md:relative z-50 h-full -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none">
+            <!-- Logo Area -->
+            <div
+                class="p-6 flex items-center justify-between border-b border-white/5">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-9 h-9 rounded-full flex flex-col overflow-hidden border border-white/20 shadow-[0_0_15px_rgba(252,209,22,0.2)]">
+                        <div class="h-1/3 w-full bg-ethiogreen"></div>
+                        <div class="h-1/3 w-full bg-ethioyellow"></div>
+                        <div class="h-1/3 w-full bg-ethiored"></div>
+                    </div>
+                    <h2
+                        class="font-bold text-lg tracking-wide bg-gradient-to-r from-gray-100 to-gray-400 bg-clip-text text-transparent">
+                        አድዋ
+                        AI</h2>
+                </div>
+                <!-- Close Sidebar for Mobile -->
+                <button
+                    class="md:hidden text-gray-400 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors active:scale-95"
+                    onclick="toggleSidebar()">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Navigation items -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-1 mt-2">
+                <span
+                    class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3 block px-3">Explore</span>
+
+                <a href="#" onclick="switchView('chat'); return false;"
+                    class="nav-link flex items-center gap-3 px-3 py-3 rounded-xl bg-white/10 text-white hover:bg-white/15 transition-all duration-200 group active:scale-95"
+                    data-view="chat">
+                    <i
+                        class="fas fa-comment-dots text-gray-400 group-hover:text-white transition-colors"></i>
+                    <span class="text-sm font-medium">Assistant Chat</span>
+                </a>
+
+                <a href="#" onclick="switchView('about'); return false;"
+                    class="nav-link flex items-center gap-3 px-3 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-gray-200 transition-all duration-200 group active:scale-95 mt-1"
+                    data-view="about">
+                    <i
+                        class="fas fa-book-open group-hover:text-ethioyellow transition-colors"></i>
+                    <span class="text-sm font-medium">About Adwa</span>
+                </a>
+
+                <a href="#" onclick="switchView('timeline'); return false;"
+                    class="nav-link flex items-center gap-3 px-3 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-gray-200 transition-all duration-200 group active:scale-95"
+                    data-view="timeline">
+                    <i
+                        class="fas fa-clock group-hover:text-ethiogreen transition-colors"></i>
+                    <span class="text-sm font-medium">History Timeline</span>
+                </a>
+
+                <a href="#" onclick="switchView('figures'); return false;"
+                    class="nav-link flex items-center gap-3 px-3 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-gray-200 transition-all duration-200 group active:scale-95"
+                    data-view="figures">
+                    <i
+                        class="fas fa-chess-queen group-hover:text-ethioyellow transition-colors"></i>
+                    <span class="text-sm font-medium">Historical Figures</span>
+                </a>
+
+                <a href="#" onclick="switchView('quiz'); return false;"
+                    class="nav-link flex items-center gap-3 px-3 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-gray-200 transition-all duration-200 group active:scale-95 mt-6 border border-white/5"
+                    data-view="quiz">
+                    <i
+                        class="fas fa-gamepad group-hover:text-ethiored transition-colors"></i>
+                    <span class="text-sm font-medium">Adwa Quiz Mode</span>
+                    <span
+                        class="ml-auto text-[10px] bg-ethiored/20 text-ethiored px-2 py-0.5 rounded-full font-bold">NEW</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main
+            class="flex-1 flex flex-col relative h-full w-full bg-transparent z-10">
+
+            <!-- Mobile Header -->
+            <header
+                class="md:hidden flex items-center justify-between p-4 border-b border-white/5 bg-dark-900/80 backdrop-blur-xl z-20 absolute top-0 w-full">
+                <button
+                    class="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors"
+                    onclick="toggleSidebar()">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <h1
+                    class="font-semibold text-gray-200 tracking-wide text-sm">Adwa
+                    AI</h1>
+                <div class="w-10"></div> <!-- Spacer for center alignment -->
+            </header>
+
+            <!-- Scrollable Views Area -->
+            <div id="views-container"
+                class="flex-1 overflow-y-auto px-4 md:px-10 pb-40 pt-20 md:pt-10 scroll-smooth custom-scrollbar">
+
+                <!-- Chat View Container - UPDATED FOR SCROLLABLE CHAT -->
+                <div id="view-chat" class="view-section h-full flex flex-col max-w-4xl mx-auto">
+                    <!-- Default Hero State (Shown when empty) -->
+                    <div id="hero-section" class="h-full flex flex-col items-center justify-center text-center fade-in">
+                        <div class="mb-8 relative float-anim">
+                            <!-- Glowing shadow beneath the icon -->
+                            <div
+                                class="absolute inset-0 bg-gradient-to-r from-ethiogreen via-ethioyellow to-ethiored blur-2xl opacity-20 rounded-full animate-pulse"></div>
+                            <div
+                                class="w-24 h-24 md:w-28 md:h-28 mx-auto rounded-full flex flex-col justify-center items-center overflow-hidden border border-white/10 bg-dark-800/80 backdrop-blur-md relative z-10 shadow-2xl">
+                                <i
+                                    class="fas fa-robot text-5xl md:text-6xl text-transparent bg-gradient-to-br from-gray-100 to-gray-400 bg-clip-text drop-shadow-sm"></i>
+                            </div>
+                        </div>
+
+                        <h1
+                            class="text-4xl md:text-5xl font-bold mb-4 tracking-tight text-white drop-shadow-sm">
+                            How can I help you today?
+                        </h1>
+                        <p
+                            class="text-gray-400 text-lg mb-12 font-medium tracking-wide max-w-lg mx-auto leading-relaxed">
+                            I am your AI guide to the Battle of Adwa. Ask me
+                            anything about Adwa.
+                        </p>
+
+                        <div
+                            class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-3xl">
+                            <!-- Suggestion Cards -->
+                            <button onclick="askQuestion('Who was Menelik II?')"
+                                class="text-left p-5 rounded-2xl border border-white/5 bg-dark-800/40 backdrop-blur-sm hover:bg-dark-700/60 hover:border-white/10 transition-all duration-300 group active:scale-[0.98]">
+                                <p
+                                    class="text-sm text-gray-200 font-semibold mb-1 group-hover:text-white transition-colors">Who
+                                    was Menelik II?</p>
+                                <p
+                                    class="text-sm text-gray-500 line-clamp-1 group-hover:text-gray-400 transition-colors">Learn
+                                    about the victorious Emperor.</p>
+                            </button>
+
+                            <button
+                                onclick="askQuestion('Why was the Battle of Adwa important?')"
+                                class="text-left p-5 rounded-2xl border border-white/5 bg-dark-800/40 backdrop-blur-sm hover:bg-dark-700/60 hover:border-white/10 transition-all duration-300 group active:scale-[0.98]">
+                                <p
+                                    class="text-sm text-gray-200 font-semibold mb-1 group-hover:text-white transition-colors">Why
+                                    was Adwa important?</p>
+                                <p
+                                    class="text-sm text-gray-500 line-clamp-1 group-hover:text-gray-400 transition-colors">Understand
+                                    its significance for Africa.</p>
+                            </button>
+
+                            <button
+                                onclick="askQuestion('Tell me about Empress Taytu.')"
+                                class="text-left p-5 rounded-2xl border border-white/5 bg-dark-800/40 backdrop-blur-sm hover:bg-dark-700/60 hover:border-white/10 transition-all duration-300 group active:scale-[0.98]">
+                                <p
+                                    class="text-sm text-gray-200 font-semibold mb-1 group-hover:text-white transition-colors">Tell
+                                    me about Empress Taytu.</p>
+                                <p
+                                    class="text-sm text-gray-500 line-clamp-1 group-hover:text-gray-400 transition-colors">Discover
+                                    the powerful Empress's role.</p>
+                            </button>
+
+                            <button
+                                onclick="askQuestion('What happened in 1896?')"
+                                class="text-left p-5 rounded-2xl border border-white/5 bg-dark-800/40 backdrop-blur-sm hover:bg-dark-700/60 hover:border-white/10 transition-all duration-300 group active:scale-[0.98]">
+                                <p
+                                    class="text-sm text-gray-200 font-semibold mb-1 group-hover:text-white transition-colors">What
+                                    happened in 1896?</p>
+                                <p
+                                    class="text-sm text-gray-500 line-clamp-1 group-hover:text-gray-400 transition-colors">Explore
+                                    the timeline of the historic battle.</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Chat Messages Array - NOW SCROLLABLE -->
+                    <div id="chat-messages"
+                        class="w-full space-y-8 hidden pt-10 font-sans tracking-wide overflow-y-auto flex-1 px-4">
+                        <!-- Messages will be injected here via JS -->
+                    </div>
+                </div>
+
+                <!-- About View -->
+                <div id="view-about"
+                    class="hidden view-section max-w-3xl mx-auto py-12 px-4 animate-[slideUp_0.4s_ease-out]">
+                    <div class="text-center mb-12">
+                        <div
+                            class="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-dark-700 to-dark-800 border border-white/10 flex items-center justify-center mb-6 shadow-xl">
+                            <i
+                                class="fas fa-book-open text-3xl text-ethioyellow"></i>
+                        </div>
+                        <h2 class="text-4xl font-bold mb-4 tracking-tight">About
+                            Adwa AI</h2>
+                        <div
+                            class="h-1 w-20 bg-gradient-to-r from-ethiogreen via-ethioyellow to-ethiored mx-auto rounded-full"></div>
+                    </div>
+
+                    <div
+                        class="bg-dark-800/50 backdrop-blur-sm border border-white/5 rounded-3xl p-8 md:p-10 shadow-2xl">
+                        <p class="text-gray-300 leading-relaxed text-lg mb-6">
+                            <strong class="text-white">Adwa AI</strong> is a
+                            specialized learning agent built to preserve,
+                            educate, and share the profound history of the
+                            Battle of Adwa.
+                        </p>
+                        <p class="text-gray-400 leading-relaxed text-lg mb-8">
+                            It leverages modern web technologies and AI-powered
+                            natural language processing to create an immersive
+                            interactive experience representing one of Africa's most
+                            significant anti-colonial triumphs. Built
+                            specifically for educational purposes.
+                        </p>
+                        <div class="flex justify-center">
+                            <button onclick="switchView('chat')"
+                                class="bg-white/10 hover:bg-white/20 text-white font-semibold py-3 px-8 rounded-full transition-all duration-300 active:scale-95 border border-white/5">
+                                Return to Assistant
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline View -->
+                <div id="view-timeline"
+                    class="hidden view-section max-w-4xl mx-auto py-12 px-2 animate-[slideUp_0.4s_ease-out]">
+                    <div class="text-center mb-16">
+                        <h2
+                            class="text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-ethiogreen via-ethioyellow to-ethiored animate-gradient-x tracking-tight">The
+                            Road to Adwa</h2>
+                        <p class="text-gray-400 text-lg">A chronological
+                            breakdown of the historic events.</p>
+                    </div>
+
+                    <div
+                        class="space-y-12 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-dark-700 before:via-gray-600 before:to-dark-800">
+
+                        <!-- Timeline Item 1 -->
+                        <div
+                            class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group animate-[slideUp_0.5s_ease-out_0.1s_both]">
+                            <div
+                                class="flex items-center justify-center w-12 h-12 rounded-full border-4 border-dark-900 bg-ethiogreen shadow-[0_0_15px_rgba(0,154,68,0.4)] shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 ml-0 z-10 transition-transform group-hover:scale-110 duration-300">
+                                <i
+                                    class="fas fa-file-signature text-white text-sm"></i>
+                            </div>
+                            <div
+                                class="w-[calc(100%-4rem)] md:w-[calc(50%-3rem)] p-6 rounded-2xl border border-white/5 bg-dark-800/80 backdrop-blur-md shadow-xl hover:bg-dark-700 hover:border-white/10 transition-all duration-300">
+                                <div
+                                    class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
+                                    <div
+                                        class="font-bold text-xl text-gray-100 tracking-tight">Treaty
+                                        of Wuchale</div>
+                                    <time
+                                        class="font-mono text-xs font-bold text-ethiored bg-ethiored/10 px-3 py-1 rounded-full w-fit">May
+                                        1889</time>
+                                </div>
+                                <p
+                                    class="text-base text-gray-400 leading-relaxed">Dispute
+                                    over Article XVII sparks the conflict. The
+                                    Amharic version states options for foreign
+                                    communication, while the Italian version
+                                    claims absolute subjugation.</p>
+                            </div>
+                        </div>
+
+                        <!-- Timeline Item 2 -->
+                        <div
+                            class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group animate-[slideUp_0.5s_ease-out_0.2s_both]">
+                            <div
+                                class="flex items-center justify-center w-12 h-12 rounded-full border-4 border-dark-900 bg-ethioyellow shadow-[0_0_15px_rgba(252,209,22,0.4)] shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 ml-0 z-10 transition-transform group-hover:scale-110 duration-300">
+                                <i
+                                    class="fas fa-shield-alt text-dark-900 text-sm"></i>
+                            </div>
+                            <div
+                                class="w-[calc(100%-4rem)] md:w-[calc(50%-3rem)] p-6 rounded-2xl border border-white/5 bg-dark-800/80 backdrop-blur-md shadow-xl hover:bg-dark-700 hover:border-white/10 transition-all duration-300">
+                                <div
+                                    class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
+                                    <div
+                                        class="font-bold text-xl text-gray-100 tracking-tight">Italian
+                                        Advance</div>
+                                    <time
+                                        class="font-mono text-xs font-bold text-dark-900 bg-ethioyellow px-3 py-1 rounded-full w-fit">1895</time>
+                                </div>
+                                <p
+                                    class="text-base text-gray-400 leading-relaxed">Italian
+                                    forces cross the Mareb River into Tigray.
+                                    Emperor Menelik II officially calls for mass
+                                    mobilization, and forces from all over
+                                    Ethiopia unite.</p>
+                            </div>
+                        </div>
+
+                        <!-- Timeline Item 3 -->
+                        <div
+                            class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group animate-[slideUp_0.5s_ease-out_0.3s_both]">
+                            <div
+                                class="flex items-center justify-center w-12 h-12 rounded-full border-4 border-dark-900 bg-ethiored shadow-[0_0_15px_rgba(206,17,38,0.4)] shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 ml-0 z-10 transition-transform group-hover:scale-110 duration-300">
+                                <i class="fas fa-meteor text-white text-sm"></i>
+                            </div>
+                            <div
+                                class="w-[calc(100%-4rem)] md:w-[calc(50%-3rem)] p-6 rounded-2xl border border-ethiored/20 bg-dark-800/80 backdrop-blur-md shadow-[0_10px_30px_rgba(206,17,38,0.05)] hover:border-ethiored/50 transition-all duration-300 relative overflow-hidden">
+                                <div
+                                    class="absolute top-0 right-0 w-32 h-32 bg-ethiored/5 rounded-full blur-2xl"></div>
+                                <div class="relative z-10">
+                                    <div
+                                        class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
+                                        <div
+                                            class="font-bold text-xl text-white tracking-tight">Battle
+                                            of Adwa</div>
+                                        <time
+                                            class="font-mono text-xs font-bold text-white bg-ethiored px-3 py-1 rounded-full shadow-lg w-fit">Mar
+                                            1, 1896</time>
+                                    </div>
+                                    <p
+                                        class="text-base text-gray-300 leading-relaxed font-medium">At
+                                        dawn, Ethiopian forces launch a massive
+                                        coordinated attack in the mountains of
+                                        Adwa, neutralizing the Italian artillery
+                                        and completely destroying the invader's
+                                        army.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Timeline Item 4 -->
+                        <div
+                            class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group animate-[slideUp_0.5s_ease-out_0.4s_both]">
+                            <div
+                                class="flex items-center justify-center w-12 h-12 rounded-full border-4 border-dark-900 bg-ethiogreen shadow-[0_0_15px_rgba(0,154,68,0.4)] shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 ml-0 z-10 transition-transform group-hover:scale-110 duration-300">
+                                <i
+                                    class="fas fa-handshake text-white text-sm"></i>
+                            </div>
+                            <div
+                                class="w-[calc(100%-4rem)] md:w-[calc(50%-3rem)] p-6 rounded-2xl border border-white/5 bg-dark-800/80 backdrop-blur-md shadow-xl hover:bg-dark-700 hover:border-white/10 transition-all duration-300">
+                                <div
+                                    class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
+                                    <div
+                                        class="font-bold text-xl text-gray-100 tracking-tight">Treaty
+                                        of Addis Ababa</div>
+                                    <time
+                                        class="font-mono text-xs font-bold text-ethiogreen bg-ethiogreen/10 px-3 py-1 rounded-full w-fit">Oct
+                                        1896</time>
+                                </div>
+                                <p
+                                    class="text-base text-gray-400 leading-relaxed">Italy
+                                    is permanently forced to sign a new treaty
+                                    explicitly abolishing the Treaty of Wuchale
+                                    and recognizing Ethiopia as an absolute,
+                                    independent sovereign nation.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Historical Figures View -->
+                <div id="view-figures"
+                    class="hidden view-section max-w-5xl mx-auto py-12 px-2 animate-[slideUp_0.4s_ease-out]">
+                    <div class="text-center mb-12">
+                        <h2 class="text-4xl font-bold mb-4 tracking-tight">Key
+                            Figures of Adwa</h2>
+                        <p class="text-gray-400 text-lg">The leaders who shaped
+                            history on the battlefield.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                        <!-- Menelik -->
+                        <div
+                            class="bg-dark-800/60 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/5 shadow-2xl hover:border-ethiogreen/50 hover:shadow-[0_10px_30px_rgba(0,154,68,0.1)] transition-all duration-500 group animate-[slideUp_0.5s_ease-out_0.1s_both]">
+                            <div
+                                class="h-40 relative overflow-hidden flex items-center justify-center border-b border-white/5">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-br from-ethiogreen/20 via-dark-800 to-dark-800 z-0"></div>
+                                <i
+                                    class="fas fa-crown text-6xl text-gray-500/50 group-hover:scale-125 group-hover:text-ethiogreen/80 transition-all duration-700 z-10 drop-shadow-lg"></i>
+                            </div>
+                            <div class="p-8">
+                                <h3
+                                    class="font-bold text-2xl mb-3 text-white">Emperor
+                                    Menelik II</h3>
+                                <p
+                                    class="text-base text-gray-400 mb-6 leading-relaxed h-20 overflow-y-auto custom-scrollbar">The
+                                    Emperor of Ethiopia who expertly played
+                                    European colonial powers against one
+                                    another, imported modern firearms, and
+                                    united rival Ethiopian provinces into a
+                                    massive, unified fighting force.</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        class="text-xs font-bold tracking-wide uppercase bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg text-gray-300">Supreme
+                                        Commander</span>
+                                    <span
+                                        class="text-xs font-bold tracking-wide uppercase bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg text-gray-300">Strategic
+                                        Genius</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Taytu -->
+                        <div
+                            class="bg-dark-800/60 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/5 shadow-2xl hover:border-ethioyellow/50 hover:shadow-[0_10px_30px_rgba(252,209,22,0.1)] transition-all duration-500 group animate-[slideUp_0.5s_ease-out_0.2s_both]">
+                            <div
+                                class="h-40 relative overflow-hidden flex items-center justify-center border-b border-white/5">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-br from-ethioyellow/20 via-dark-800 to-dark-800 z-0"></div>
+                                <i
+                                    class="fas fa-chess-queen text-6xl text-gray-500/50 group-hover:scale-125 group-hover:text-ethioyellow/80 transition-all duration-700 z-10 drop-shadow-lg"></i>
+                            </div>
+                            <div class="p-8">
+                                <h3
+                                    class="font-bold text-2xl mb-3 text-white">Empress
+                                    Taytu Betul</h3>
+                                <p
+                                    class="text-base text-gray-400 mb-6 leading-relaxed h-20 overflow-y-auto custom-scrollbar">A
+                                    fierce diplomat who adamantly opposed
+                                    Italian deceit. Not only a political
+                                    advisor, she commanded her own battalion of
+                                    5,000 guards and architected the cutting off
+                                    of the Italian water supply at Mekelle.</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        class="text-xs font-bold tracking-wide uppercase bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg text-gray-300">Master
+                                        Diplomat</span>
+                                    <span
+                                        class="text-xs font-bold tracking-wide uppercase bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg text-gray-300">Military
+                                        Leader</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ras Alula -->
+                        <div
+                            class="bg-dark-800/60 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/5 shadow-2xl hover:border-ethiogreen/50 hover:shadow-[0_10px_30px_rgba(0,154,68,0.1)] transition-all duration-500 group animate-[slideUp_0.5s_ease-out_0.3s_both]">
+                            <div
+                                class="h-40 relative overflow-hidden flex items-center justify-center border-b border-white/5">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-br from-ethiogreen/20 via-dark-800 to-dark-800 z-0"></div>
+                                <i
+                                    class="fas fa-horse-head text-6xl text-gray-500/50 group-hover:scale-125 group-hover:text-ethiogreen/80 transition-all duration-700 z-10 drop-shadow-lg"></i>
+                            </div>
+                            <div class="p-8">
+                                <h3
+                                    class="font-bold text-2xl mb-3 text-white">Ras
+                                    Alula Engida</h3>
+                                <p
+                                    class="text-base text-gray-400 mb-6 leading-relaxed h-20 overflow-y-auto custom-scrollbar">Considered
+                                    one of the greatest African generals, he
+                                    organized intelligence and led the vanguard
+                                    attack that completely cut off the Italian
+                                    forces, sealing their doom among the
+                                    mountains.</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        class="text-xs font-bold tracking-wide uppercase bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg text-gray-300">Chief
+                                        of Staff</span>
+                                    <span
+                                        class="text-xs font-bold tracking-wide uppercase bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg text-gray-300">Vanguard
+                                        Commander</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Baratieri -->
+                        <div
+                            class="bg-dark-800/60 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/5 shadow-2xl hover:border-ethiored/50 hover:shadow-[0_10px_30px_rgba(206,17,38,0.1)] transition-all duration-500 group animate-[slideUp_0.5s_ease-out_0.4s_both]">
+                            <div
+                                class="h-40 relative overflow-hidden flex items-center justify-center border-b border-white/5">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-br from-ethiored/20 via-dark-800 to-dark-800 z-0"></div>
+                                <i
+                                    class="fas fa-flag text-6xl text-gray-500/50 group-hover:scale-125 group-hover:text-ethiored/80 transition-all duration-700 z-10 drop-shadow-lg"></i>
+                            </div>
+                            <div class="p-8">
+                                <h3
+                                    class="font-bold text-2xl mb-3 text-white">Gen.
+                                    Oreste Baratieri</h3>
+                                <p
+                                    class="text-base text-gray-400 mb-6 leading-relaxed h-20 overflow-y-auto custom-scrollbar">The
+                                    Italian commander whose grave
+                                    underestimation of the Ethiopian forces
+                                    caused his army to become lost in the
+                                    mountains during a night march, leading
+                                    directly to their slaughter.</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        class="text-xs font-bold tracking-wide uppercase bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg text-gray-300">Italian
+                                        Commander</span>
+                                    <span
+                                        class="text-xs font-bold tracking-wide uppercase bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg text-ethiored/80">Defeated</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz Mode View -->
+                <div id="view-quiz"
+                    class="hidden view-section max-w-3xl mx-auto py-12 px-2 animate-[slideUp_0.4s_ease-out]">
+                    <div
+                        class="bg-dark-800/60 backdrop-blur-xl rounded-[2rem] p-8 md:p-14 border border-white/10 shadow-2xl relative overflow-hidden">
+                        <!-- Top gradient accent -->
+                        <div
+                            class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-ethiogreen via-ethioyellow to-ethiored"></div>
+
+                        <!-- Init Screen -->
+                        <div id="quiz-start" class="text-center py-6">
+                            <div
+                                class="w-24 h-24 mx-auto bg-dark-700 rounded-full flex items-center justify-center mb-8 shadow-inner border border-white/5">
+                                <i
+                                    class="fas fa-graduation-cap text-5xl text-transparent bg-clip-text bg-gradient-to-br from-ethioyellow to-ethiored"></i>
+                            </div>
+                            <h2
+                                class="text-4xl font-bold mb-4 tracking-tight text-white">The
+                                Adwa Challenge</h2>
+                            <p
+                                class="text-gray-400 text-lg mb-10 max-w-md mx-auto leading-relaxed">Prove
+                                your knowledge of African history and the
+                                legendary Battle of Adwa.</p>
+                            <button onclick="startQuiz()"
+                                class="bg-white text-dark-900 font-bold tracking-wide py-4 px-10 rounded-full hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all duration-300 hover:scale-105 active:scale-95 text-lg">
+                                Start Quiz
+                            </button>
+                        </div>
+
+                        <!-- Active Quiz Area -->
+                        <div id="quiz-active" class="hidden">
+                            <div
+                                class="flex justify-between items-center mb-10 pb-4 border-b border-white/10 text-sm font-bold tracking-widest uppercase">
+                                <span class="text-gray-500">Q <span
+                                        id="q-current"
+                                        class="text-white text-lg">1</span> /
+                                    <span id="q-total">5</span></span>
+                                <span class="text-gray-500">Score: <span
+                                        id="q-score"
+                                        class="text-ethioyellow text-lg">0</span></span>
+                            </div>
+
+                            <h3 id="quiz-question"
+                                class="text-2xl md:text-3xl font-bold mb-10 leading-tight text-white">Loading
+                                question...</h3>
+
+                            <div id="quiz-options" class="flex flex-col gap-4">
+                                <!-- Option buttons injected here -->
+                            </div>
+                        </div>
+
+                        <!-- Result Area -->
+                        <div id="quiz-result"
+                            class="hidden text-center py-6 fade-in">
+                            <div
+                                class="text-7xl mb-8 animate-[slideUp_0.5s_ease-out]"
+                                id="result-icon">🎓</div>
+                            <h2
+                                class="text-4xl font-bold mb-4 tracking-tight text-white">Quiz
+                                Complete!</h2>
+                            <p class="text-gray-400 mb-10 text-xl">You scored
+                                <span id="final-score"
+                                    class="text-ethioyellow font-bold text-3xl mx-2"></span>
+                                out of 5.</p>
+                            <button onclick="resetQuizUI()"
+                                class="bg-transparent border-2 border-white/20 hover:border-white text-white font-bold tracking-wide py-4 px-10 rounded-full transition-all duration-300 hover:bg-white hover:text-dark-900 active:scale-95 text-lg">
+                                Play Again
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Input Area Container (Absolute pinned bottom) -->
+            <div id="input-area-container"
+                class="absolute bottom-0 w-full left-0 right-0 p-4 md:px-8 pb-6 md:pb-8 bg-gradient-to-t from-dark-900 via-dark-900/90 to-transparent pt-20 z-30 pointer-events-none">
+                <div
+                    class="max-w-4xl mx-auto relative flex items-end gap-3 pointer-events-auto">
+
+                    <!-- Main Input Box - Removed mic button -->
+                    <div
+                        class="flex-1 relative bg-dark-800/60 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/10 focus-within:border-gray-400 focus-within:bg-dark-800/90 transition-all duration-300 group">
+                        <textarea
+                            id="user-input"
+                            rows="1"
+                            class="w-full bg-transparent text-gray-100 placeholder-gray-500 px-6 py-4 md:py-4 md:pr-14 rounded-3xl focus:outline-none resize-none overflow-hidden max-h-32 text-base md:text-lg leading-relaxed font-medium custom-scrollbar"
+                            placeholder="Message Adwa AI..."
+                            autocomplete="off"></textarea>
+
+                        <!-- Send Button absolute inside input -->
+                        <button id="send-btn"
+                            class="absolute right-2 bottom-2 md:bottom-2.5 p-2.5 rounded-full bg-white/5 text-gray-500 hover:bg-white hover:text-dark-900 transition-all duration-300 disabled:opacity-30 disabled:hover:bg-white/5 disabled:hover:text-gray-500 active:scale-90 group-focus-within:text-white">
+                            <i
+                                class="fas fa-arrow-up text-sm md:text-base px-1"></i>
+                        </button>
+                    </div>
+
+                </div>
+                <div
+                    class="text-center mt-3 text-xs md:text-sm font-medium text-gray-600 tracking-wide">Adwa
+                    AI can make mistakes. Consider verifying historical
+                    facts.</div>
+            </div>
+
+        </main>
+
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
+    </body>
+</html>
