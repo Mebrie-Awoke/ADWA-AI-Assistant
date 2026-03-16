@@ -68,7 +68,10 @@ def chat():
     response = rag_chain.invoke({"input": msg})
     print("Response : ", response["answer"])
     return str(response["answer"])
-
+@app.route('/health')
+def health():
+    return {"status": "healthy"}, 200
+print(f"🔍 PORT env var: {os.environ.get('PORT')}")    
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port, debug=False)
