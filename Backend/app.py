@@ -51,9 +51,10 @@ rag_chain = create_retrieval_chain(retriever, question_answer_chain)
 
 print("the rag is ready");
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 app = Flask(__name__,
-            template_folder=os.path.join(project_root, 'Frontend', 'templates'),
-            static_folder=os.path.join(project_root, 'Frontend', 'static'))
+            template_folder=os.path.join(project_root, 'frontend', 'templates'),
+            static_folder=os.path.join(project_root, 'frontend', 'static'))
 
 @app.route("/")
 def index():
