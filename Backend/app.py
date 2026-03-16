@@ -14,7 +14,7 @@ load_dotenv()
 GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
 
 os.environ["GROQ_API_KEY"] = GROQ_API_KEY
-
+print("the environment is loaded");
 embeddings = download_hugging_face_embeddings()
 
 persist_directory = "./chroma_db"  
@@ -32,7 +32,7 @@ else:
     )
 
 retriever = docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 3})
-
+print("the retriever finished");
 chatModel = ChatGroq(
     model="llama-3.3-70b-versatile",  
     temperature=0.1,
@@ -49,7 +49,7 @@ prompt = ChatPromptTemplate.from_messages(
 question_answer_chain = create_stuff_documents_chain(chatModel, prompt)
 rag_chain = create_retrieval_chain(retriever, question_answer_chain)
 
-
+print("the rag is ready");
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 app = Flask(__name__,
             template_folder=os.path.join(project_root, 'Frontend', 'templates'),
@@ -59,7 +59,7 @@ app = Flask(__name__,
 def index():
     return render_template('chat.html')
 
-
+print("the frontend renders sucessfully");
 @app.route("/get", methods=["GET", "POST"])
 def chat():
     msg = request.form["msg"]
@@ -73,3 +73,4 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=False)
 
 application = app
+print("the application is ready");
