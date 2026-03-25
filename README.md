@@ -7,7 +7,7 @@ The goal is simple: make one of Ethiopia’s most important historical victories
 
 
 ## Features
-### History-focused AI assistant
+#### History-focused AI assistant
 Specialized in the Battle of Adwa and related Ethiopian history.
 🧠 RAG-based architecture
 Answers are generated from a curated knowledge base, not just generic AI output.
