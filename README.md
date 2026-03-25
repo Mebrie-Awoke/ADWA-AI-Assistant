@@ -42,8 +42,8 @@ Make sure you have Python installed and required dependencies configured.
 
 ## Tech Stacks:
 
-frontend - html,css and js
+frontend : html,css and js
 
-backend python flask
+backend : python, flask
 
 
