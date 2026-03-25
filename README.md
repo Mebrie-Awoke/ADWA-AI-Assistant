@@ -18,17 +18,17 @@ Minimal setup required.
 
 
 
-## to run this:
-
-clone the repo first:   git clone https://github.com/Mebrie-Awoke/ADWA-AI-Assistant
-
-cd ADWA_AI_ASSISTANT
-
+## Getting Started
+1. Clone the repository
+git clone https://github.com/Mebrie-Awoke/ADWA-AI-Assistant
+2. Navigate into the project
+cd ADWA-AI-Assistant
 cd backend
+3. Run the backend
+python index.py
+python app.py
 
-run  : python index.py
-
-run  : python app.py
+Make sure you have Python installed and required dependencies configured.
 
 
 ## Tech Stacks:
