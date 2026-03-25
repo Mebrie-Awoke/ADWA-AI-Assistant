@@ -5,6 +5,17 @@ It uses a Retrieval-Augmented Generation (RAG) approach to deliver accurate, con
 
 The goal is simple: make one of Ethiopia’s most important historical victories accessible, searchable, and intelligently explorable.
 
+
+## Features
+### History-focused AI assistant
+Specialized in the Battle of Adwa and related Ethiopian history.
+🧠 RAG-based architecture
+Answers are generated from a curated knowledge base, not just generic AI output.
+🌐 Full-stack application
+Simple frontend + Python backend for seamless interaction.
+⚡ Lightweight & easy to run
+Minimal setup required.
+
 ## to run this:
 
 clone the repo first:   git clone https://github.com/Mebrie-Awoke/ADWA-AI-Assistant
