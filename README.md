@@ -16,6 +16,17 @@ Simple frontend + Python backend for seamless interaction.
 #### Lightweight & easy to run
 Minimal setup required.
 
+
+Frontend (HTML/CSS/JS)
+        ↓
+Backend (Flask API)
+        ↓
+RAG Pipeline
+        ↓
+Historical Documents / Knowledge Base
+        ↓
+AI Response
+
 ## to run this:
 
 clone the repo first:   git clone https://github.com/Mebrie-Awoke/ADWA-AI-Assistant
