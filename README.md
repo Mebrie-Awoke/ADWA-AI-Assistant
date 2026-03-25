@@ -24,8 +24,17 @@ git clone https://github.com/Mebrie-Awoke/ADWA-AI-Assistant
 #### 2. Navigate into the project
 cd ADWA-AI-Assistant
 cd backend
+#### Environment Variables
+ Create a .env file
+
+Inside the backend/ directory, create a file named:
+
+.env
+##### Add your Groq API Key
+GROQ_API_KEY=XXXXXXXXXXXXXXXXXX
 #### 3. Run the backend
 python index.py
+
 python app.py
 
 Make sure you have Python installed and required dependencies configured.
