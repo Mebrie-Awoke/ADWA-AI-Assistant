@@ -31,7 +31,7 @@ run  : python index.py
 run  : python app.py
 
 
-## tech stacks:
+## Tech Stacks:
 
 frontend - html,css and js
 
