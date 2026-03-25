@@ -14,3 +14,12 @@ cd backend
 run  : python index.py
 
 run  : python app.py
+
+
+## tech stacks:
+
+frontend - html,css and js
+
+backend python flask
+
+
