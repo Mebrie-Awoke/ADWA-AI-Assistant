@@ -24,7 +24,7 @@ git clone https://github.com/Mebrie-Awoke/ADWA-AI-Assistant
 #### 2. Navigate into the project
 cd ADWA-AI-Assistant
 cd backend
-#####3. Run the backend
+#### 3. Run the backend
 python index.py
 python app.py
 
