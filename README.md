@@ -17,15 +17,6 @@ Simple frontend + Python backend for seamless interaction.
 Minimal setup required.
 
 
-Frontend (HTML/CSS/JS)
-        ↓
-Backend (Flask API)
-        ↓
-RAG Pipeline
-        ↓
-Historical Documents / Knowledge Base
-        ↓
-AI Response
 
 ## to run this:
 
