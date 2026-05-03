@@ -8,6 +8,7 @@ The goal is simple: make one of Ethiopia’s most important historical victories
 
 
 
+
 ## Features
 #### History-focused AI assistant
 Specialized in the Battle of Adwa and related Ethiopian history.
