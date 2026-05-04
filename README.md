@@ -28,6 +28,11 @@ cd backend
 
 Inside the backend/ directory, create a file named:
 
+
+
+
+
+
 .env
 ##### Add your Groq API Key
 GROQ_API_KEY=XXXXXXXXXXXXXXXXXX
