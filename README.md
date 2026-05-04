@@ -5,9 +5,6 @@ Adwa AI is a full-stack AI assistant focused on the Battle of Adwa and Ethiopian
 It uses a Retrieval-Augmented Generation (RAG) approach to deliver accurate, context-aware answers grounded in historical documents.
 
 
-
-
-
 The goal is simple: make one of Ethiopia’s most important historical victories accessible, searchable, and intelligently explorable.
 
 ## Features
