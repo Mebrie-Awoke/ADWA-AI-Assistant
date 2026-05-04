@@ -17,7 +17,6 @@ Simple frontend + Python backend for seamless interaction.
 Minimal setup required.
 
 
-
 ## Getting Started
 #### 1. Clone the repository
 git clone https://github.com/Mebrie-Awoke/ADWA-AI-Assistant
