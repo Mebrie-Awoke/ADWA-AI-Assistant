@@ -8,6 +8,7 @@ It uses a Retrieval-Augmented Generation (RAG) approach to deliver accurate, con
 
 
 
+
 The goal is simple: make one of Ethiopia’s most important historical victories accessible, searchable, and intelligently explorable.
 
 ## Features
