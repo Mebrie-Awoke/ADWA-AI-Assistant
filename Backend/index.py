@@ -32,7 +32,7 @@ print(" Loading embeddings...")
 embeddings = download_hugging_face_embeddings()
 print("Embeddings loaded")
 
-persist_directory 
+
 persist_directory = "./chroma_db"
 if os.path.exists(persist_directory):
     print(f"Removing existing ChromaDB at {persist_directory}")
