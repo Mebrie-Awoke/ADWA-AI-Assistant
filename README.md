@@ -1,5 +1,5 @@
 # ADWA AI  
-here is the live link  https://adwa-ai-assistant-3.onrender.com/
+here is the live lin https://adwa-ai-assistant-3.onrender.com/
 
 Adwa AI is a full-stack AI assistant focused on the Battle of Adwa and Ethiopian history.
 It uses a Retrieval-Augmented Generation (RAG) approach to deliver accurate, context-aware answers grounded in historical documents.
