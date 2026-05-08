@@ -15,6 +15,7 @@ print("Loading PDF files...")
 extracted_data = load_pdf_file(data='data/')
 print(f" Loaded {len(extracted_data)} pages")
 
+
 print("Filtering documents...")
 filter_data = filter_to_minimal_docs(extracted_data)
 print(f"Filtered to {len(filter_data)} documents")
