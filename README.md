@@ -1,4 +1,4 @@
-# ADWA AI 
+# ADWA AI
 https://adwa-ai-assistant-3.onrender.com/
 
 Adwa AI is a full-stack AI assistant focused on the Battle of Adwa and Ethiopian history.
