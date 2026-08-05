@@ -7,7 +7,7 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 from src.prompt import *
-import os     
+import os      
   
 load_dotenv()
 
@@ -36,7 +36,7 @@ print("the retriever finished");
 chatModel = ChatGroq(
     model="llama-3.3-70b-versatile",  
     temperature=0.1,
-    max_tokens=1000,
+    max_tokens=1000, 
 )
 
 prompt = ChatPromptTemplate.from_messages(
