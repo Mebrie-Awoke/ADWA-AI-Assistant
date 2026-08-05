@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from src.prompt import * 
 import os          
   
-load_dotenv()
+load_dotenv()  
 
 GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
 
